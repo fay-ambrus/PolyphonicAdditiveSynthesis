@@ -1,0 +1,10 @@
+Builds/
+*.suo
+*.user
+*.opensdf
+*.sdf
+*.vcxproj*
+*.xcodeproj
+*.generated.*
+*.DS_Store
+JuceLibraryCode/
