@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include <juce_gui_extra/juce_gui_extra.h>
 
 //==============================================================================
 /**
@@ -28,6 +29,8 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     PolyphonicAdditiveSynthesisAudioProcessor& audioProcessor;
+    juce::MidiKeyboardState keyboardState;
+    juce::MidiKeyboardComponent keyboardComponent { keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PolyphonicAdditiveSynthesisAudioProcessorEditor)
 };

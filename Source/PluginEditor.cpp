@@ -13,9 +13,9 @@
 PolyphonicAdditiveSynthesisAudioProcessorEditor::PolyphonicAdditiveSynthesisAudioProcessorEditor (PolyphonicAdditiveSynthesisAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (400, 300);
+  addAndMakeVisible(keyboardComponent);
+  keyboardState.addListener(&p);
+  setSize (400, 300);
 }
 
 PolyphonicAdditiveSynthesisAudioProcessorEditor::~PolyphonicAdditiveSynthesisAudioProcessorEditor()
@@ -35,6 +35,5 @@ void PolyphonicAdditiveSynthesisAudioProcessorEditor::paint (juce::Graphics& g)
 
 void PolyphonicAdditiveSynthesisAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    keyboardComponent.setBounds (10, 200, getWidth() - 20, 80);
 }

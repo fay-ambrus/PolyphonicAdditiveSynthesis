@@ -10,8 +10,8 @@
 
 #include "AdditiveVoice.h"
 
-bool AdditiveVoice::canPlaySound(juce::SynthesiserSound* synthetiserSound) {
-    return true;
+bool AdditiveVoice::canPlaySound(juce::SynthesiserSound* synthesiserSound) {
+    return dynamic_cast<AdditiveSound*> (synthesiserSound) != nullptr;
 }
 
 void AdditiveVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound *sound, int currentPitchWheelPosition) {
@@ -19,17 +19,23 @@ void AdditiveVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesi
     noteVelocity = velocity;
     this->sound = sound;
 
-    float frequency = 440.0f * (std::pow(2.0f, midiNoteNumber - 69 / 12.0f));
-
     auto sampleRate = getSampleRate();
-    angleDelta = juce::MathConstants<float>::twoPi * frequency / sampleRate;
+    if (sampleRate <= 0.0)
+        sampleRate = 44100.0f;
+
+    // Correct MIDI-to-frequency formula; ensure (midiNoteNumber - 69) is divided by 12.0f
+    auto frequency = 440.0f * std::pow(2.0f, (midiNoteNumber - 69) / 12.0f);
+    angleDelta = juce::MathConstants<float>::twoPi * frequency / static_cast<float>(sampleRate);
 
     currentAngle = 0.0f;
+
+    DBG("Note On: " << midiNoteNumber << " velocity: " << velocity << " freq: " << frequency << "ad: " << angleDelta);
 }
 
 void AdditiveVoice::stopNote(float velocity, bool allowTailOff) {
-    midiNoteNumber = -1;
-    noteVelocity = 0.0f;
+    clearCurrentNote();
+	midiNoteNumber = -1;
+    DBG("Note Off");
 }
 
 void AdditiveVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples) {
@@ -37,7 +43,7 @@ void AdditiveVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int 
         return;
 
     auto* leftBuffer = outputBuffer.getWritePointer(0, startSample);
-    //auto* rightBuffer = outputBuffer.getNumChannels() > 1 ? outputBuffer.getWritePointer (1, startSample) : nullptr;
+    auto* rightBuffer = outputBuffer.getNumChannels() > 1 ? outputBuffer.getWritePointer (1, startSample) : nullptr;
 
     for (int sample = 0; sample < numSamples; ++sample)
     {
@@ -45,8 +51,8 @@ void AdditiveVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int 
 
         leftBuffer[sample] += currentSample;
 
-        /*if (rightBuffer != nullptr)
-            rightBuffer[sample] += currentSample;*/
+        if (rightBuffer != nullptr)
+            rightBuffer[sample] += currentSample;
 
         currentAngle += angleDelta;
 

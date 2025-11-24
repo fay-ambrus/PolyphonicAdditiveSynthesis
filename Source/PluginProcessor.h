@@ -15,7 +15,7 @@
 //==============================================================================
 /**
 */
-class PolyphonicAdditiveSynthesisAudioProcessor  : public juce::AudioProcessor
+class PolyphonicAdditiveSynthesisAudioProcessor  : public juce::AudioProcessor, public juce::MidiKeyboardStateListener
 {
 public:
     juce::Synthesiser synth;
@@ -56,6 +56,9 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+
+    void handleNoteOn (juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity) override;
+    void handleNoteOff (juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity) override;
 
 private:
     //==============================================================================

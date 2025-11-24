@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="yZPspE" name="PolyphonicAdditiveSynthesis" projectType="audioplug"
-              useAppConfig="0" addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+              useAppConfig="0" addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1"
+              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
+              pluginManufacturer="kerak" pluginVST3Category="Synth">
   <MAINGROUP id="pr99fP" name="PolyphonicAdditiveSynthesis">
     <GROUP id="{A5BF6F43-B6BC-6A38-DA62-8D83CC241EF9}" name="Source">
+      <FILE id="hYfqQi" name="AdditiveSound.cpp" compile="1" resource="0"
+            file="Source/AdditiveSound.cpp"/>
+      <FILE id="Sb94vW" name="AdditiveSound.h" compile="0" resource="0" file="Source/AdditiveSound.h"/>
+      <FILE id="XU9upB" name="AdditiveVoice.cpp" compile="1" resource="0"
+            file="Source/AdditiveVoice.cpp"/>
+      <FILE id="DcZSob" name="AdditiveVoice.h" compile="0" resource="0" file="Source/AdditiveVoice.h"/>
       <FILE id="Kcawdf" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="rADIuK" name="PluginProcessor.h" compile="0" resource="0"
