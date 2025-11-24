@@ -15,7 +15,6 @@ PolyphonicAdditiveSynthesisAudioProcessor::PolyphonicAdditiveSynthesisAudioProce
      : AudioProcessor (BusesProperties())
 #endif
 {
-    synth = juce::Synthesiser();
     synth.addSound(new AdditiveSound());
     for (int i = 0; i < 8; ++i)
         synth.addVoice(new AdditiveVoice());
