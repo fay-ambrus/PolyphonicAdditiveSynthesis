@@ -12,7 +12,7 @@
 //==============================================================================
 PolyphonicAdditiveSynthesisAudioProcessor::PolyphonicAdditiveSynthesisAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
+     : AudioProcessor (BusesProperties())
 #endif
 {
     synth.addSound(new AdditiveSound());
