@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 3.15)
+
+project(PolyphonicAdditiveSynthesis VERSION 0.0.1)
+
+add_subdirectory(JUCE)
+
+juce_add_plugin(PolyphonicAdditiveSynthesis
+    COMPANY_NAME "MyCompany"
+    PLUGIN_NAME "PolyphonicAdditiveSynthesis"
+    BUNDLE_ID com.mycompany.PolyphonicAdditiveSynthesis
+    IS_SYNTH TRUE
+    NEEDS_MIDI_INPUT TRUE
+    NEEDS_MIDI_OUTPUT FALSE
+    VST3 TRUE
+    AU FALSE
+)
+
+target_sources(PolyphonicAdditiveSynthesis PRIVATE
+    Source/PluginProcessor.cpp
+    Source/PluginProcessor.h
+    Source/PluginEditor.cpp
+    Source/PluginEditor.h
+)
