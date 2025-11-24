@@ -9,6 +9,8 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "AdditiveSound.h"
+#include "AdditiveVoice.h"
 
 //==============================================================================
 /**
