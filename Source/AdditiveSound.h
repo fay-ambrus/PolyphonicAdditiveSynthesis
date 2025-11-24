@@ -12,4 +12,7 @@
 
 #include <JuceHeader.h>
 
-class AdditiveSound : public juce::SynthetiserSound { };
+class AdditiveSound : public juce::SynthesiserSound {
+
+
+};

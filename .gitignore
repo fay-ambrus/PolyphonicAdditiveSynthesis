@@ -1,4 +1,5 @@
 Build/
+.vscode/
 *.suo
 *.user
 *.opensdf

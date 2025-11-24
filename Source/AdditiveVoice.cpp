@@ -14,16 +14,15 @@ bool AdditiveVoice::canPlaySound(juce::SynthesiserSound* synthetiserSound) {
     return true;
 }
 
-void AdditiveVoice::startNote(int midiNoteNumber, float velocity, SynthesiserSound *sound, int currentPitchWheelPosition) {
+void AdditiveVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound *sound, int currentPitchWheelPosition) {
     this->midiNoteNumber = midiNoteNumber;
     noteVelocity = velocity;
     this->sound = sound;
 
-    float frequency = 440.0f * (2.0f ^ (midiNoteNumber - 69) / 12.0f);
+    float frequency = 440.0f * (std::pow(2.0f, midiNoteNumber - 69 / 12.0f));
 
-    // Compute phase increment per sample
     auto sampleRate = getSampleRate();
-    angleDelta = juce::MathConstants<float>::twoPi * cyclesPerSecond / sampleRate;
+    angleDelta = juce::MathConstants<float>::twoPi * frequency / sampleRate;
 
     currentAngle = 0.0f;
 }
@@ -33,8 +32,8 @@ void AdditiveVoice::stopNote(float velocity, bool allowTailOff) {
     noteVelocity = 0.0f;
 }
 
-void AdditiveVoice::renderNextBlock(AudioBuffer<float>& outputBuffer, int startSample, int numSamples) {
-    if (currentNote < 0)
+void AdditiveVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples) {
+    if (midiNoteNumber < 0)
         return;
 
     auto* leftBuffer = outputBuffer.getWritePointer(0, startSample);
@@ -42,7 +41,7 @@ void AdditiveVoice::renderNextBlock(AudioBuffer<float>& outputBuffer, int startS
 
     for (int sample = 0; sample < numSamples; ++sample)
     {
-        auto currentSample = std::sin(currentAngle) * level;
+        auto currentSample = std::sin(currentAngle) * noteVelocity;
 
         leftBuffer[sample] += currentSample;
 
