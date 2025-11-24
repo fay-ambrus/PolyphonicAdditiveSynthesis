@@ -1,4 +1,4 @@
-Builds/
+Build/
 *.suo
 *.user
 *.opensdf
@@ -7,4 +7,3 @@ Builds/
 *.xcodeproj
 *.generated.*
 *.DS_Store
-JuceLibraryCode/
