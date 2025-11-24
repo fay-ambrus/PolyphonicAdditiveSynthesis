@@ -10,15 +10,15 @@
 
 #include "AdditiveVoice.h"
 
-bool AdditiveVoice::canPlaySound(SynthesiserSound* synthetiserSound) {
+bool AdditiveVoice::canPlaySound(juce::SynthesiserSound* synthetiserSound) {
     return true;
 }
-    
+
 void AdditiveVoice::startNote(int midiNoteNumber, float velocity, SynthesiserSound *sound, int currentPitchWheelPosition) {
-    this.midiNoteNumber = midiNoteNumber;
+    this->midiNoteNumber = midiNoteNumber;
     noteVelocity = velocity;
-    this.sound = sound;
-    
+    this->sound = sound;
+
     float frequency = 440.0f * (2.0f ^ (midiNoteNumber - 69) / 12.0f);
 
     // Compute phase increment per sample
@@ -32,7 +32,7 @@ void AdditiveVoice::stopNote(float velocity, bool allowTailOff) {
     midiNoteNumber = -1;
     noteVelocity = 0.0f;
 }
-   
+
 void AdditiveVoice::renderNextBlock(AudioBuffer<float>& outputBuffer, int startSample, int numSamples) {
     if (currentNote < 0)
         return;

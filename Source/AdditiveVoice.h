@@ -14,12 +14,12 @@ class AdditiveVoice : public juce::SynthetiserVoice {
 private:
     int midiNoteNumber = -1;
     float noteVelocity = 0.0f;
-    SynthesiserSound *sound = nullptr;
+    juce::SynthesiserSound *sound = nullptr;
     float frequency = 0.0f;
 
 public:
-    bool canPlaySound(SynthesiserSound* synthetiserSound) override;
-    void startNote (int midiNoteNumber, float velocity, SynthesiserSound *sound, int currentPitchWheelPosition);
-    void stopNote (float velocity, bool allowTailOff);
-    void renderNextBlock override (AudioBuffer<float>& outputBuffer, int startSample, int numSamples);
-}
+    bool canPlaySound(juce::SynthesiserSound* synthetiserSound) override;
+    void startNote (int midiNoteNumber, float velocity, juce::SynthesiserSound *sound, int currentPitchWheelPosition) override;
+    void stopNote (float velocity, bool allowTailOff) override;
+    void renderNextBlock (juce::AudioBuffer<float>& outputBuffer, int startSample, int numSamples) override;
+};

@@ -10,4 +10,6 @@
 
 #pragma once
 
-class AdditiveSound : public juce::SynthetiserSound { }
+#include <JuceHeader.h>
+
+class AdditiveSound : public juce::SynthetiserSound { };
