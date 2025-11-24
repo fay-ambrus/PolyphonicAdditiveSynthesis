@@ -10,4 +10,4 @@
 
 #pragma once
 
-class AdditiveSound : public SynthetiserSound { }
+class AdditiveSound : public juce::SynthetiserSound { }
