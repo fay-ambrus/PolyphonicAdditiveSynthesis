@@ -16,7 +16,7 @@
 class PolyphonicAdditiveSynthesisAudioProcessor  : public juce::AudioProcessor
 {
 public:
-    Synthetiser synth;
+    juce::Synthesiser synth;
 
     //==============================================================================
     PolyphonicAdditiveSynthesisAudioProcessor();
