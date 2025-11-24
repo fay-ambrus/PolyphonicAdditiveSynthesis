@@ -50,8 +50,15 @@ void AdditiveVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int 
 
         currentAngle += angleDelta;
 
-        // wrap phase to [0, 2π] to avoid floating-point drift
         if (currentAngle > juce::MathConstants<float>::twoPi)
             currentAngle -= juce::MathConstants<float>::twoPi;
     }
+}
+
+void AdditiveVoice::controllerMoved(int controllerNumber, int newControllerValue) {
+    // TODO: Handle MIDI controller changes if needed
+}
+
+void AdditiveVoice::pitchWheelMoved(int newPitchWheelValue) {
+    // TODO: Handle MIDI pitch wheel changes if needed
 }
