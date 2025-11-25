@@ -16,20 +16,23 @@ bool AdditiveVoice::canPlaySound(juce::SynthesiserSound* synthesiserSound) {
 
 void AdditiveVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound *sound, int currentPitchWheelPosition) {
     this->midiNoteNumber = midiNoteNumber;
-    noteVelocity = velocity;
     this->sound = sound;
+    this->currentTime = 0.0f;
 
-    auto sampleRate = getSampleRate();
-    if (sampleRate <= 0.0)
-        sampleRate = 44100.0f;
+    sampleRate = static_cast<float>(getSampleRate());
+    DBG("Sample rate: " << sampleRate);
 
-    // Correct MIDI-to-frequency formula; ensure (midiNoteNumber - 69) is divided by 12.0f
-    auto frequency = 440.0f * std::pow(2.0f, (midiNoteNumber - 69) / 12.0f);
-    angleDelta = juce::MathConstants<float>::twoPi * frequency / static_cast<float>(sampleRate);
+	float baseFrequency = 440.0f * std::pow(2.0f, (midiNoteNumber - 69) / 12.0f);
 
-    currentAngle = 0.0f;
+    for (int i = 0; i < numOfOvertones; i++) {
+        // set initial angle
+		harmonicsAngles[i] = 0.0f;
 
-    DBG("Note On: " << midiNoteNumber << " velocity: " << velocity << " freq: " << frequency << "ad: " << angleDelta);
+        // set angle deltas
+		harmonicsAnglesDeltas[i] = juce::MathConstants<float>::twoPi * baseFrequency * (i + 1) / sampleRate;
+    }
+
+    DBG("Note On: " << midiNoteNumber <<  " sample rate: " << sampleRate);
 }
 
 void AdditiveVoice::stopNote(float velocity, bool allowTailOff) {
@@ -47,24 +50,58 @@ void AdditiveVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int 
 
     for (int sample = 0; sample < numSamples; ++sample)
     {
-        auto currentSample = std::sin(currentAngle) * noteVelocity;
+		// calculate curent smple value
+        auto currentSample = 0.0f;
+
+        for (int i = 0; i < numOfOvertones; ++i) {
+			// calculate the correct amplitude value from the envelope
+            int envelopeIdxBefore = static_cast<int>(std::floor(currentTime * envelopeRate));
+			int envelopeIdxAfter = envelopeIdxBefore + 1;
+            float envelopeFraction = (currentTime * envelopeRate) - envelopeIdxBefore;
+
+            if (envelopeIdxBefore >= harmonicsAmplitudesEnvelope.size()) {
+                envelopeIdxBefore = envelopeIdxBefore % harmonicsAmplitudesEnvelope.size();
+            }
+
+            if (envelopeIdxBefore == harmonicsAmplitudesEnvelope.size() - 1)
+            {
+                envelopeIdxAfter = 0;
+			}
+
+            if (envelopeIdxBefore >= 20 && envelopeIdxAfter >= 20) {
+				DBG("Envelope index out of bounds: " << envelopeIdxBefore << ", " << envelopeIdxAfter);
+            }
+
+            float harmonicAmplitude = (1.0f - envelopeFraction) * harmonicsAmplitudesEnvelope[envelopeIdxBefore][i] + envelopeFraction * harmonicsAmplitudesEnvelope[envelopeIdxAfter][i];
+
+            currentSample += std::sin(harmonicsAngles[i]) * harmonicAmplitude;
+		}
 
         leftBuffer[sample] += currentSample;
 
         if (rightBuffer != nullptr)
             rightBuffer[sample] += currentSample;
 
-        currentAngle += angleDelta;
+		// update angles
+        for (int i = 0; i < numOfOvertones; ++i) {
+            harmonicsAngles[i] += harmonicsAnglesDeltas[i];
 
-        if (currentAngle > juce::MathConstants<float>::twoPi)
-            currentAngle -= juce::MathConstants<float>::twoPi;
+            if (harmonicsAngles[i] > juce::MathConstants<float>::twoPi)
+                harmonicsAngles[i] -= juce::MathConstants<float>::twoPi;
+		}
+
+        // update delta time
+		currentTime += 1.0f / sampleRate;
+        if (currentTime >= envelopeLength * (1.0f / envelopeRate)) {
+			currentTime -= (envelopeLength * (1.0f / envelopeRate));
+        }
     }
 }
 
 void AdditiveVoice::controllerMoved(int controllerNumber, int newControllerValue) {
-    // TODO: Handle MIDI controller changes if needed
+    // TODO: Handle MIDI controller changes
 }
 
 void AdditiveVoice::pitchWheelMoved(int newPitchWheelValue) {
-    // TODO: Handle MIDI pitch wheel changes if needed
+    // TODO: Handle MIDI pitch wheel changes
 }
